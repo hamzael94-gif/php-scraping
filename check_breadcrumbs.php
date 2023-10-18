@@ -16,7 +16,34 @@ if (isset($_POST['url'])) {
     $breadcrumbs = $xpath->query("//*[contains(@class, 'breadcrumbs')]");
 
     if ($breadcrumbs->length > 0) {
-        echo 'Des Breadcrumbs ont été trouvés sur la page.';
+        echo '<h2>Résultats de la vérification :</h2>';
+        echo '<table border="1">';
+        echo '<tr><th>Breadcrumbs</th><th>Est Cliquable</th><th>Lien (href)</th></tr>';
+
+        // Parcourez les éléments de Breadcrumbs
+        foreach ($breadcrumbs as $breadcrumb) {
+            $isClickable = false;
+            $linkHref = '';
+
+            // Recherchez des liens à l'intérieur de l'élément de Breadcrumbs
+            $breadcrumbLinks = $xpath->query(".//a", $breadcrumb);
+
+            // Parcourez les liens
+            foreach ($breadcrumbLinks as $link) {
+                if ($link->hasAttribute('href')) {
+                    $isClickable = true;
+                    $linkHref = $link->getAttribute('href');
+                }
+            }
+
+            echo '<tr>';
+            echo '<td>' . $breadcrumb->nodeValue . '</td>';
+            echo '<td>' . ($isClickable ? 'Oui' : 'Non') . '</td>';
+            echo '<td>' . $linkHref . '</td>';
+            echo '</tr>';
+        }
+
+        echo '</table>';
     } else {
         echo 'Aucun Breadcrumbs n\'a été trouvé sur la page.';
     }
